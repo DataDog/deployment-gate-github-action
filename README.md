@@ -121,15 +121,6 @@ The action leverages the native `datadog-ci` error handling:
    - Check that deployment gates are properly configured in Datadog
 
 
-### Debug Mode
-
-To enable debug logging, add the following to your workflow:
-
-```yaml
-env:
-  ACTIONS_STEP_DEBUG: true
-```
-
 ## Contributing
 
 1. Fork the repository

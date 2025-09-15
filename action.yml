@@ -1,0 +1,95 @@
+name: 'Datadog Deployment Gate'
+description: 'Evaluate a Datadog deployment gate to ensure deployment quality'
+author: 'Datadog'
+
+branding:
+  icon: 'shield'
+  color: 'purple'
+
+inputs:
+  service:
+    description: 'Name of the service being deployed'
+    required: true
+  env:
+    description: 'Deployment environment (e.g., staging, production)'
+    required: true
+  version:
+    description: 'Version being deployed (required for APM Faulty Deployment Detection rules)'
+    required: false
+  identifier:
+    description: 'Custom identifier for the deployment gate evaluation (defaults to "default")'
+    required: false
+  primary-tag:
+    description: 'Primary tag to scope down APM Faulty Deployment Detection rules analysis (e.g., region:us-central-1)'
+    required: false
+  timeout:
+    description: 'Maximum time to wait for the script execution in seconds'
+    required: false
+    default: '10800'
+  fail-on-error:
+    description: 'When false, the script will consider the gate as passed and exit with code 0 when timeout is reached or unexpected errors occur'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install datadog-ci
+      shell: bash
+      run: npm install -g @datadog/datadog-ci
+    
+    - name: Run Deployment Gate
+      shell: bash
+      env:
+        DD_BETA_COMMANDS_ENABLED: '1'
+      run: |
+        # Validate required environment variables
+        if [ -z "$DD_API_KEY" ]; then
+          echo "❌ Error: DD_API_KEY environment variable is required"
+          exit 1
+        fi
+        
+        if [ -z "$DD_APP_KEY" ]; then
+          echo "❌ Error: DD_APP_KEY environment variable is required"
+          exit 1
+        fi
+        
+        echo "🚀 Starting Datadog Deployment Gate evaluation..."
+        echo "Service: ${{ inputs.service }}"
+        echo "Environment: ${{ inputs.env }}"
+        echo "Datadog Site: ${DD_SITE:-datadoghq.com}"
+        echo "Timeout: ${{ inputs.timeout }}s"
+        echo "Fail on Error: ${{ inputs.fail-on-error }}"
+        
+        cmd="datadog-ci deployment gate --service '${{ inputs.service }}' --env '${{ inputs.env }}'"
+        
+        # Add timeout parameter
+        cmd="$cmd --timeout ${{ inputs.timeout }}"
+        
+        # Add fail-on-error parameter
+        if [ "${{ inputs.fail-on-error }}" = "false" ]; then
+          cmd="$cmd --no-fail"
+        fi
+        
+        if [ -n "${{ inputs.version }}" ]; then
+          cmd="$cmd --version '${{ inputs.version }}'"
+          echo "Version: ${{ inputs.version }}"
+        fi
+        
+        if [ -n "${{ inputs.identifier }}" ]; then
+          cmd="$cmd --identifier '${{ inputs.identifier }}'"
+          echo "Identifier: ${{ inputs.identifier }}"
+        fi
+        
+        if [ -n "${{ inputs.primary-tag }}" ]; then
+          cmd="$cmd --primary-tag '${{ inputs.primary-tag }}'"
+          echo "Primary Tag: ${{ inputs.primary-tag }}"
+        fi
+        
+        echo "Executing: $cmd"
+        eval "$cmd"

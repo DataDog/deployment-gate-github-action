@@ -44,6 +44,8 @@ jobs:
           service: 'my-service'
           env: 'production'
           version: '1.0.1'
+          timeout: '900'  # 15 minutes
+          fail-on-empty: 'true'
       
       - name: Deploy
         if: success()
@@ -52,6 +54,69 @@ jobs:
           # Your deployment commands here
 ```
 
+### Advanced Example with All Options
+
+```yaml
+name: Advanced Deployment with Gate
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Deploy Application
+        run: |
+          echo "Deploying application..."
+          # Your deployment commands here
+      
+      - name: Evaluate Deployment Gate
+        uses: your-org/deployment-gate-github-action@v1
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DD_SITE: ${{ vars.DD_SITE || 'datadoghq.com' }}
+        with:
+          service: 'transaction-backend'
+          env: 'production'
+          version: ${{ github.sha }}
+          identifier: 'release-${{ github.run_number }}'
+          primary-tag: 'region:us-east-1'
+          scope: 'tier:production,datacenter:east'
+          tags: 'team:backend,owner:platform,deployment:github-actions'
+          timeout: '1200'  # 20 minutes
+          dry-run: 'false'
+          fail-if-unavailable: 'true'
+          fail-on-empty: 'true'
+          no-wait: 'false'
+      
+      - name: Post-deployment Actions
+        if: success()
+        run: |
+          echo "Deployment gate passed, running post-deployment tasks"
+          # Your post-deployment commands here
+```
+
+### Dry Run Example
+
+```yaml
+- name: Test Deployment Gate (Dry Run)
+  uses: your-org/deployment-gate-github-action@v1
+  env:
+    DD_API_KEY: ${{ secrets.DD_API_KEY }}
+    DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
+  with:
+    service: 'my-service'
+    env: 'staging'
+    version: ${{ github.sha }}
+    dry-run: 'true'  # Only validate, don't actually evaluate
+    timeout: '300'   # Shorter timeout for dry runs
+```
 
 ## Environment Variables
 
@@ -72,9 +137,33 @@ The following environment variables are required:
 | `version` | Version being deployed (required for APM Faulty Deployment Detection rules) | ❌ | |
 | `identifier` | Custom identifier for the deployment gate evaluation | ❌ | |
 | `primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection rules (e.g., `region:us-central-1`) | ❌ | |
-| `timeout` | Maximum time to wait for the script execution in seconds | ❌ | `10800` (3 hours) |
-| `fail-on-error` | When false, the script will consider the gate as passed and exit with code 0 when timeout is reached or unexpected errors occur | ❌ | `false` |
+| `scope` | Additional scope when retrieving matching rules as key:value pairs (e.g., `region:us-east-1,tier:production`) | ❌ | |
+| `tags` | Global tags applied to all results as key:value pairs (e.g., `team:backend,service:api`) | ❌ | |
+| `timeout` | Command timeout in seconds | ❌ | `600` |
+| `dry-run` | Run the command without the final evaluation step. All other checks are performed. | ❌ | `false` |
+| `fail-if-unavailable` | Fail the command if Datadog is unavailable | ❌ | `false` |
+| `fail-on-empty` | Fail the command if no matching rules are found in Datadog | ❌ | `false` |
+| `no-wait` | Remove the waiting time (30s) that ensures events can be properly queried by rules | ❌ | `false` |
 
+### Parameter Details
+
+#### `scope` and `tags`
+Both `scope` and `tags` accept comma-separated key:value pairs:
+- **`scope`**: Additional scope when retrieving matching rules
+  - Example: `"region:us-east-1,tier:production,datacenter:east"`
+- **`tags`**: Global tags applied to all results  
+  - Example: `"team:backend,service:api,owner:platform"`
+
+#### Boolean Flags
+- **`dry-run`**: Validates configuration without performing actual evaluation
+- **`fail-if-unavailable`**: Makes the action fail if Datadog services are unavailable
+- **`fail-on-empty`**: Makes the action fail if no matching deployment gate rules are found
+- **`no-wait`**: Skips the 30-second waiting period (use with caution - may cause incorrect evaluations)
+
+#### `timeout`
+- Specifies how long to wait for the deployment gate evaluation to complete
+- Default is 600 seconds (10 minutes)
+- Increase for complex gates that may take longer to evaluate
 
 ### Datadog Sites
 

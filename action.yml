@@ -59,7 +59,7 @@ runs:
     
     - name: Install datadog-ci
       shell: bash
-      run: npm install -g @datadog/datadog-ci
+      run: npm install -g @datadog/datadog-ci@gabriel.anca/add-evaluation-summary-to-deployment-gate-output
     
     - name: Run Deployment Gate
       shell: bash

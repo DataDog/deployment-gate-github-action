@@ -54,69 +54,6 @@ jobs:
           # Your deployment commands here
 ```
 
-### Advanced Example with All Options
-
-```yaml
-name: Advanced Deployment with Gate
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Deploy Application
-        run: |
-          echo "Deploying application..."
-          # Your deployment commands here
-      
-      - name: Evaluate Deployment Gate
-        uses: your-org/deployment-gate-github-action@v1
-        env:
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
-          DD_SITE: ${{ vars.DD_SITE || 'datadoghq.com' }}
-        with:
-          service: 'transaction-backend'
-          env: 'production'
-          version: ${{ github.sha }}
-          identifier: 'release-${{ github.run_number }}'
-          primary-tag: 'region:us-east-1'
-          scope: 'tier:production,datacenter:east'
-          tags: 'team:backend,owner:platform,deployment:github-actions'
-          timeout: '1200'  # 20 minutes
-          dry-run: 'false'
-          fail-if-unavailable: 'true'
-          fail-on-empty: 'true'
-          no-wait: 'false'
-      
-      - name: Post-deployment Actions
-        if: success()
-        run: |
-          echo "Deployment gate passed, running post-deployment tasks"
-          # Your post-deployment commands here
-```
-
-### Dry Run Example
-
-```yaml
-- name: Test Deployment Gate (Dry Run)
-  uses: your-org/deployment-gate-github-action@v1
-  env:
-    DD_API_KEY: ${{ secrets.DD_API_KEY }}
-    DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
-  with:
-    service: 'my-service'
-    env: 'staging'
-    version: ${{ github.sha }}
-    dry-run: 'true'  # Only validate, don't actually evaluate
-    timeout: '300'   # Shorter timeout for dry runs
-```
 
 ## Environment Variables
 

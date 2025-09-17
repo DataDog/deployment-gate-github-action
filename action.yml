@@ -14,12 +14,12 @@ inputs:
     description: 'Deployment environment (e.g., staging, production)'
     required: true
   version:
-    description: 'Version being deployed (required for APM Faulty Deployment Detection rules)'
+    description: 'Version being deployed (required for gates with APM Faulty Deployment Detection rules)'
     required: false
   identifier:
     description: 'Custom identifier for the deployment gate evaluation (defaults to "default")'
     required: false
-  primary-tag:
+  apm-primary-tag:
     description: 'Primary tag to scope down APM Faulty Deployment Detection rules analysis (e.g., region:us-central-1)'
     required: false
   fail-on-error:

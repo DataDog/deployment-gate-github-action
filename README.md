@@ -9,8 +9,9 @@ You can learn more in the Deployment Gates documentation: https://docs.datadoghq
 Before using this action, you need to:
 
 1. Set up deployment gates in your Datadog account. If you have not, join the preview here: https://www.datadoghq.com/product-preview/deployment-gates/
-2. Have a Datadog API key and Application key.
-3. Configure your deployment gates for your services and environments on the Datadog UI.
+2. Have a Datadog API key
+3. Have a Datadog Application key with at least the `cd_visibility_read` scope.
+4. Configure your deployment gates for your services and environments on the Datadog UI.
 
 ## Usage
 
@@ -28,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
     
         - name: Deploy Canary
         run: |
@@ -36,16 +37,13 @@ jobs:
           # Your deployment commands here
 
       - name: Evaluate Deployment Gate
-        uses: your-org/deployment-gate-github-action@v1
+        uses: DataDog/deployment-gate-github-action@v1
         env:
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
         with:
           service: 'my-service'
           env: 'production'
-          version: '1.0.1'
-          timeout: '900'  # 15 minutes
-          fail-on-empty: 'true'
       
       - name: Deploy
         if: success()
@@ -73,14 +71,9 @@ The following environment variables are required:
 | `env` | Deployment environment (e.g., staging, production) | ✅ | |
 | `version` | Version being deployed (required for APM Faulty Deployment Detection rules) | ❌ | |
 | `identifier` | Custom identifier for the deployment gate evaluation | ❌ | |
-| `primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection rules (e.g., `region:us-central-1`) | ❌ | |
-| `scope` | Additional scope when retrieving matching rules as key:value pairs (e.g., `region:us-east-1,tier:production`) | ❌ | |
-| `tags` | Global tags applied to all results as key:value pairs (e.g., `team:backend,service:api`) | ❌ | |
+| `apm-primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection rules (e.g., `region:us-central-1`) | ❌ | |
 | `timeout` | Command timeout in seconds | ❌ | `600` |
-| `dry-run` | Run the command without the final evaluation step. All other checks are performed. | ❌ | `false` |
-| `fail-if-unavailable` | Fail the command if Datadog is unavailable | ❌ | `false` |
-| `fail-on-empty` | Fail the command if no matching rules are found in Datadog | ❌ | `false` |
-| `no-wait` | Remove the waiting time (30s) that ensures events can be properly queried by rules | ❌ | `false` |
+| `fail-on-error` | When true, the script will consider the gate as failed when timeout is reached or unexpected errors occur calling the Datadog APIs. | ❌ | `false` |
 
 ### Parameter Details
 
@@ -104,13 +97,7 @@ Both `scope` and `tags` accept comma-separated key:value pairs:
 
 ### Datadog Sites
 
-The `DD_SITE` environment variable supports the following values:
-- `datadoghq.com` (US1) - default
-- `us3.datadoghq.com` (US3)
-- `us5.datadoghq.com` (US5)
-- `datadoghq.eu` (EU1)
-- `ap1.datadoghq.com` (AP1)
-- `ddog-gov.com` (US1-FED)
+You can find the accepted `DD_SITE` environment variables here: https://docs.datadoghq.com/getting_started/site/
 
 ## Outputs
 
@@ -118,7 +105,7 @@ This action uses the native `datadog-ci` command which handles all output intern
 - ✅ **Succeed** if the deployment gate passes
 - ❌ **Fail** if the deployment gate fails or encounters an error
 
-The `datadog-ci` command provides detailed output in the action logs, including:
+This action provides detailed output in the logs, including:
 - Gate evaluation status
 - Individual rule results
 - Links to view results in Datadog UI
@@ -130,7 +117,7 @@ The action leverages the native `datadog-ci` error handling:
 - ✅ **Pass** if the deployment gate evaluation succeeds
 - ❌ **Fail** if the deployment gate evaluation fails
 - ❌ **Fail** if there are authentication or configuration errors
-- 🔄 **Automatic polling** until evaluation completes (handled by datadog-ci)
+- 🔄 **Automatic polling** until evaluation completes
 - ⏱️ **Built-in timeout handling** with sensible defaults
 
 ## Troubleshooting
@@ -139,8 +126,8 @@ The action leverages the native `datadog-ci` error handling:
 
 1. **Authentication Errors**
    - Verify your `DD_API_KEY` and `DD_APP_KEY` are correct
-   - Ensure the keys have the necessary permissions
-   - Ensure you have access to the Deployment Gates preview
+   - Ensure the Application Key have the necessary `cd_visibility_read` permission
+   - Ensure you have access to the Deployment Gates preview: https://app.datadoghq.com/ci/deployment-gates/getting-started
 
 2. **Gate Not Found**
    - Verify the service name and environment match your Datadog configuration
@@ -156,7 +143,7 @@ The action leverages the native `datadog-ci` error handling:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 

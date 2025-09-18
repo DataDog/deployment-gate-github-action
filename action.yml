@@ -72,12 +72,6 @@ runs:
           echo "Timeout: ${{ inputs.timeout }}s"
         fi
         
-        # Add boolean flags
-        if [ "${{ inputs.dry-run }}" = "true" ]; then
-          cmd="$cmd --dry-run"
-          echo "Dry Run: enabled"
-        fi
-        
         if [ "${{ inputs.fail-on-error }}" = "true" ]; then
           cmd="$cmd --fail-on-error"
           echo "Fail if Unavailable: enabled"

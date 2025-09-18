@@ -1,6 +1,6 @@
 # Datadog Deployment Gate GitHub Action
 
-A GitHub Action that evaluates Datadog deployment gates to ensure deployment quality and safety. This action provides a simple way to integrate Datadog deployment gates into your CI/CD pipeline.
+Deployment Gates allow you to reduce the likelihood and impact of incidents caused by deployments. This action provides a simple way to integrate Datadog Deployment Gates into your CI/CD pipeline.
 
 You can learn more in the Deployment Gates documentation: https://docs.datadoghq.com/deployment_gates/
 
@@ -8,17 +8,17 @@ You can learn more in the Deployment Gates documentation: https://docs.datadoghq
 
 Before using this action, you need to:
 
-1. Set up deployment gates in your Datadog account. If you have not, join the preview here: https://www.datadoghq.com/product-preview/deployment-gates/
+1. Set up Deployment Gates in your Datadog account. If you have not, join the preview here: https://www.datadoghq.com/product-preview/deployment-gates/
 2. Have a Datadog API key
 3. Have a Datadog Application key with at least the `cd_visibility_read` scope.
-4. Configure your deployment gates for your services and environments on the Datadog UI.
+4. Configure your Deployment Gates for your services and environments on the Datadog UI.
 
 ## Usage
 
 ### Basic Example
 
 ```yaml
-name: Deploy with Datadog Gate
+name: Deploy with Datadog Deployment Gate
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
       - name: Deploy
         if: success()
         run: |
-          echo "Deployment gate passed, proceeding with deployment"
+          echo "Deployment Gate passed, proceeding with deployment"
           # Your deployment commands here
 ```
 
@@ -61,7 +61,7 @@ The following environment variables are required:
 |----------|-------------|----------|
 | `DD_API_KEY` | Datadog API key | ✅ |
 | `DD_APP_KEY` | Datadog application key | ✅ |
-| `DD_SITE` | Datadog site (e.g., `datadoghq.com`, `datadoghq.eu`) | ❌ (defaults to `datadoghq.com`) |
+| `DD_SITE` | [Datadog site](https://docs.datadoghq.com/getting_started/site) (e.g., `datadoghq.com`, `datadoghq.eu`) | ❌ (defaults to `datadoghq.com`) |
 
 ## Inputs
 
@@ -70,9 +70,9 @@ The following environment variables are required:
 | `service` | Name of the service being deployed | ✅ | |
 | `env` | Deployment environment (e.g., staging, production) | ✅ | |
 | `version` | Version being deployed (required for APM Faulty Deployment Detection rules) | ❌ | |
-| `identifier` | Custom identifier for the deployment gate evaluation | ❌ | |
+| `identifier` | Custom identifier for the Deployment Gate evaluation | ❌ | |
 | `apm-primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection rules (e.g., `region:us-central-1`) | ❌ | |
-| `timeout` | Command timeout in seconds | ❌ | `600` |
+| `timeout` | Command timeout in seconds | ❌ | |
 | `fail-on-error` | When true, the script will consider the gate as failed when timeout is reached or unexpected errors occur calling the Datadog APIs. | ❌ | `false` |
 
 ### Parameter Details
@@ -102,8 +102,8 @@ You can find the accepted `DD_SITE` environment variables here: https://docs.dat
 ## Outputs
 
 This action uses the native `datadog-ci` command which handles all output internally. The action will:
-- ✅ **Succeed** if the deployment gate passes
-- ❌ **Fail** if the deployment gate fails or encounters an error
+- ✅ **Succeed** if the Deployment Gate passes
+- ❌ **Fail** if the Deployment Gate fails or encounters an error
 
 This action provides detailed output in the logs, including:
 - Gate evaluation status
@@ -114,8 +114,8 @@ This action provides detailed output in the logs, including:
 ## Error Handling
 
 The action leverages the native `datadog-ci` error handling:
-- ✅ **Pass** if the deployment gate evaluation succeeds
-- ❌ **Fail** if the deployment gate evaluation fails
+- ✅ **Pass** if the Deployment Gate evaluation succeeds
+- ❌ **Fail** if the Deployment Gate evaluation fails
 - ❌ **Fail** if there are authentication or configuration errors
 - 🔄 **Automatic polling** until evaluation completes
 - ⏱️ **Built-in timeout handling** with sensible defaults
@@ -131,7 +131,7 @@ The action leverages the native `datadog-ci` error handling:
 
 2. **Gate Not Found**
    - Verify the service name and environment match your Datadog configuration
-   - Check that deployment gates are properly configured in Datadog
+   - Check that Deployment Gates are properly configured in Datadog
 
 
 ## Contributing

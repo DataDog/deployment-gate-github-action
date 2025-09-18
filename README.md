@@ -75,29 +75,6 @@ The following environment variables are required:
 | `timeout` | Command timeout in seconds | ❌ | |
 | `fail-on-error` | When true, the script will consider the gate as failed when timeout is reached or unexpected errors occur calling the Datadog APIs. | ❌ | `false` |
 
-### Parameter Details
-
-#### `scope` and `tags`
-Both `scope` and `tags` accept comma-separated key:value pairs:
-- **`scope`**: Additional scope when retrieving matching rules
-  - Example: `"region:us-east-1,tier:production,datacenter:east"`
-- **`tags`**: Global tags applied to all results  
-  - Example: `"team:backend,service:api,owner:platform"`
-
-#### Boolean Flags
-- **`dry-run`**: Validates configuration without performing actual evaluation
-- **`fail-if-unavailable`**: Makes the action fail if Datadog services are unavailable
-- **`fail-on-empty`**: Makes the action fail if no matching deployment gate rules are found
-- **`no-wait`**: Skips the 30-second waiting period (use with caution - may cause incorrect evaluations)
-
-#### `timeout`
-- Specifies how long to wait for the deployment gate evaluation to complete
-- Default is 600 seconds (10 minutes)
-- Increase for complex gates that may take longer to evaluate
-
-### Datadog Sites
-
-You can find the accepted `DD_SITE` environment variables here: https://docs.datadoghq.com/getting_started/site/
 
 ## Outputs
 

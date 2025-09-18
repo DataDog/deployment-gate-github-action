@@ -66,8 +66,7 @@ runs:
         
         cmd="datadog-ci deployment gate --service '${{ inputs.service }}' --env '${{ inputs.env }}'"
         
-        # Add timeout parameter
-        if [ -n "${{ inputs.timeout }}" ]; then
+         if [ -n "${{ inputs.timeout }}" ]; then
           cmd="$cmd --timeout ${{ inputs.timeout }}"
           echo "Timeout: ${{ inputs.timeout }}s"
         fi
@@ -76,8 +75,7 @@ runs:
           cmd="$cmd --fail-on-error"
           echo "Fail if Unavailable: enabled"
         fi
-        
-        # Add optional parameters
+
         if [ -n "${{ inputs.version }}" ]; then
           cmd="$cmd --version '${{ inputs.version }}'"
           echo "Version: ${{ inputs.version }}"

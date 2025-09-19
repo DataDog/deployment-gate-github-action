@@ -111,6 +111,9 @@ The action leverages the native `datadog-ci` error handling:
    - Check that Deployment Gates are properly configured in Datadog
 
 
+## Contributing
+
+To contribute to this project, see the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 
 ## License

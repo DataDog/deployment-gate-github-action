@@ -113,10 +113,8 @@ The action leverages the native `datadog-ci` error handling:
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+To contribute to this project, see the [CONTRIBUTING](CONTRIBUTING.md) file.
+
 
 ## License
 

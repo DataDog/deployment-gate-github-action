@@ -1,0 +1,26 @@
+# Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+### How to release?
+In the main branch:
+
+1. Create a new tag using vX.Y.Z version.
+
+```
+git tag vX.Y.Z
+git push --tags
+```
+
+1. Create a new release and mark it as Latest release in GitHub.
+2. Replace the tag pointing to the major version using to the same commit than the vX.Y.Z tag.
+
+```
+git tag --delete vX
+git push --delete vX
+git tag vX 
+git push --tags
+```

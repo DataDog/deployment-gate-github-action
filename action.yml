@@ -1,0 +1,95 @@
+name: 'Datadog Deployment Gate'
+description: 'Evaluate a Datadog deployment gate to ensure deployment quality'
+author: 'Datadog'
+
+branding:
+  icon: 'shield'
+  color: 'purple'
+
+inputs:
+  service:
+    description: 'Name of the service being deployed'
+    required: true
+  env:
+    description: 'Deployment environment (e.g., staging, production)'
+    required: true
+  version:
+    description: 'Version being deployed (required for gates with APM Faulty Deployment Detection rules)'
+    required: false
+  identifier:
+    description: 'Custom identifier for the deployment gate evaluation (defaults to "default")'
+    required: false
+  apm-primary-tag:
+    description: 'Primary tag to scope down APM Faulty Deployment Detection rules analysis (e.g., region:us-central-1)'
+    required: false
+  fail-on-error:
+    description: 'Fail the command if timeout is reached or unexpected errors occur calling the Datadog APIs.'
+    required: false
+    default: 'false'
+  timeout:
+    description: 'Command timeout in seconds'
+    required: false
+
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v5
+      with:
+        node-version: '24'
+    
+    - name: Install datadog-ci
+      shell: bash
+      run: npm install -g @datadog/datadog-ci
+    
+    - name: Run Deployment Gate
+      shell: bash
+      env:
+        DD_BETA_COMMANDS_ENABLED: '1'
+      run: |
+        # Validate required environment variables
+        if [ -z "$DD_API_KEY" ]; then
+          echo "❌ Error: DD_API_KEY environment variable is required"
+          exit 1
+        fi
+        
+        if [ -z "$DD_APP_KEY" ]; then
+          echo "❌ Error: DD_APP_KEY environment variable is required"
+          exit 1
+        fi
+        
+        echo "🚀 Starting Datadog Deployment Gate evaluation..."
+        echo "Service: ${{ inputs.service }}"
+        echo "Environment: ${{ inputs.env }}"
+        echo "Datadog Site: ${DD_SITE:-datadoghq.com}"
+        
+        cmd="datadog-ci deployment gate --service '${{ inputs.service }}' --env '${{ inputs.env }}'"
+        
+        if [ -n "${{ inputs.timeout }}" ]; then
+          cmd="$cmd --timeout ${{ inputs.timeout }}"
+          echo "Timeout: ${{ inputs.timeout }}s"
+        fi
+        
+        if [ "${{ inputs.fail-on-error }}" = "true" ]; then
+          cmd="$cmd --fail-on-error"
+          echo "Fail if Unavailable: enabled"
+        fi
+
+        if [ -n "${{ inputs.version }}" ]; then
+          cmd="$cmd --version '${{ inputs.version }}'"
+          echo "Version: ${{ inputs.version }}"
+        fi
+        
+        if [ -n "${{ inputs.identifier }}" ]; then
+          cmd="$cmd --identifier '${{ inputs.identifier }}'"
+          echo "Identifier: ${{ inputs.identifier }}"
+        fi
+        
+        if [ -n "${{ inputs.apm-primary-tag }}" ]; then
+          cmd="$cmd --apm-primary-tag '${{ inputs.apm-primary-tag }}'"
+          echo "Primary Tag: ${{ inputs.apm-primary-tag }}"
+        fi
+        
+        echo "Executing: $cmd"
+        eval "$cmd"

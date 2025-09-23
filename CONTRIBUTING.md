@@ -1,6 +1,6 @@
 # Welcome
 
-Welcome! We are glad you are interested in contributing to deployment-gates-github-action. This guide will help you understand the requirements and guidelines to improve your contributor experience.
+Welcome! We are glad you are interested in contributing to deployment-gate-github-action. This guide will help you understand the requirements and guidelines to improve your contributor experience.
 
 ## Contributing to code
 
@@ -31,7 +31,7 @@ The changes will be tested from our side as well before merging.
 
 ### Contributing to reporting bugs
 
-If you think you have found a bug in deployment-gates-action, feel free to report it. When creating issues, you will be presented with a template to fill. Please, fill as much as you can from that template, including steps to reproduce your issue, so we can address it quicker.
+If you think you have found a bug in deployment-gate-github-action, feel free to report it. When creating issues, you will be presented with a template to fill. Please, fill as much as you can from that template, including steps to reproduce your issue, so we can address it quicker.
 
 ### Contributing to triaging issues
 

@@ -32,20 +32,19 @@ inputs:
   timeout:
     description: 'Command timeout in seconds'
     required: false
-
+  datadog-ci-version:
+    description: 'Version of datadog-ci to install. Use a major version like `v5` to get the latest release within that major version, or a specific tag like `v5.6.0` to pin.'
+    required: false
+    default: "v5"
 
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node.js
-      uses: actions/setup-node@v5
-      with:
-        node-version: '24'
-    
     - name: Install datadog-ci
-      shell: bash
-      run: npm install -g @datadog/datadog-ci
-    
+      uses: DataDog/install-datadog-ci-github-action@7960c07e413c56665e12346b34eec80089a7260e # v1.0.2
+      with:
+        version: ${{ inputs.datadog-ci-version }}
+
     - name: Run Deployment Gate
       shell: bash
       env:

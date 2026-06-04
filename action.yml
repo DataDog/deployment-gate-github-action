@@ -32,6 +32,12 @@ inputs:
   timeout:
     description: 'Command timeout in seconds'
     required: false
+  config:
+    description: 'Inline gate configuration as YAML or JSON (mutually exclusive with config-file). Example: "rules:\n  - type: monitor\n    name: my-monitor"'
+    required: false
+  config-file:
+    description: 'Path to a JSON file containing gate rule definitions (mutually exclusive with config).'
+    required: false
   datadog-ci-version:
     description: 'Version of datadog-ci to install. Use a major version like `v5` to get the latest release within that major version, or a specific tag like `v5.6.0` to pin.'
     required: false
@@ -49,6 +55,7 @@ runs:
       shell: bash
       env:
         DD_BETA_COMMANDS_ENABLED: '1'
+        DD_GATE_CONFIG: ${{ inputs.config }}
       run: |
         # Validate required environment variables
         if [ -z "$DD_API_KEY" ]; then
@@ -92,6 +99,22 @@ runs:
           cmd="$cmd --apm-primary-tag '${{ inputs.apm-primary-tag }}'"
           echo "Primary Tag: ${{ inputs.apm-primary-tag }}"
         fi
-        
+
+        if [ -n "$DD_GATE_CONFIG" ] && [ -n "${{ inputs.config-file }}" ]; then
+          echo "❌ Error: config and config-file are mutually exclusive"
+          exit 1
+        fi
+
+        if [ -n "$DD_GATE_CONFIG" ]; then
+          config_file=$(mktemp /tmp/dd-gate-config-XXXXXX.json)
+          trap "rm -f '$config_file'" EXIT
+          printf '%s' "$DD_GATE_CONFIG" | python3 -c "import yaml, json, sys; print(json.dumps(yaml.safe_load(sys.stdin.read())))" > "$config_file"
+          cmd="$cmd --config-file '$config_file'"
+          echo "Config: (inline)"
+        elif [ -n "${{ inputs.config-file }}" ]; then
+          cmd="$cmd --config-file '${{ inputs.config-file }}'"
+          echo "Config file: ${{ inputs.config-file }}"
+        fi
+
         echo "Executing: $cmd"
         eval "$cmd"

@@ -74,6 +74,8 @@ The following environment variables are required:
 | `apm-primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection rules (e.g., `region:us-central-1`) | ❌ | |
 | `timeout` | Command timeout in seconds | ❌ | |
 | `fail-on-error` | When true, the script will consider the gate as failed when timeout is reached or unexpected errors occur calling the Datadog APIs. | ❌ | `false` |
+| `config` | Inline gate rule definitions as YAML or JSON. Mutually exclusive with `config-file`. | ❌ | |
+| `config-file` | Path to a JSON file containing gate rule definitions. Mutually exclusive with `config`. | ❌ | |
 | `datadog-ci-version` | Version of datadog-ci to install. Use a major version like `v5` to get the latest release within that major version, or a specific tag like `v5.6.0` to pin. | ❌ | `v5` |
 
 

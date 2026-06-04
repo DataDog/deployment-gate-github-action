@@ -74,10 +74,29 @@ The following environment variables are required:
 | `apm-primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection rules (e.g., `region:us-central-1`) | ❌ | |
 | `timeout` | Command timeout in seconds | ❌ | |
 | `fail-on-error` | When true, the script will consider the gate as failed when timeout is reached or unexpected errors occur calling the Datadog APIs. | ❌ | `false` |
-| `config` | Inline gate rule definitions as YAML or JSON. Mutually exclusive with `config-file`. | ❌ | |
-| `config-file` | Path to a JSON file containing gate rule definitions. Mutually exclusive with `config`. | ❌ | |
+| `config` | Path to a file containing gate rule definitions. | ❌ | |
 | `datadog-ci-version` | Version of datadog-ci to install. Use a major version like `v5` to get the latest release within that major version, or a specific tag like `v5.6.0` to pin. | ❌ | `v5` |
 
+
+## Config file format
+
+The `config` input accepts a path to a JSON file defining the gate rules to evaluate. Refer to the [setup documentation](https://docs.datadoghq.com/deployment_gates/setup) for more details.
+
+```json
+{
+  "dryRun": false,
+  "rules": [
+    {
+      "type": "monitor",
+      "name": "error rate monitors",
+      "options": {
+        "query": "service:payments-backend env:prod",
+        "duration": 300
+      }
+    }
+  ]
+}
+```
 
 ## Outputs
 

@@ -109,10 +109,10 @@ runs:
           config_file=$(mktemp /tmp/dd-gate-config-XXXXXX.json)
           trap "rm -f '$config_file'" EXIT
           printf '%s' "$DD_GATE_CONFIG" | python3 -c "import yaml, json, sys; print(json.dumps(yaml.safe_load(sys.stdin.read())))" > "$config_file"
-          cmd="$cmd --config-file '$config_file'"
+          cmd="$cmd --config '$config_file'"
           echo "Config: (inline)"
         elif [ -n "${{ inputs.config-file }}" ]; then
-          cmd="$cmd --config-file '${{ inputs.config-file }}'"
+          cmd="$cmd --config '${{ inputs.config-file }}'"
           echo "Config file: ${{ inputs.config-file }}"
         fi
 

@@ -80,7 +80,7 @@ The following environment variables are required:
 
 ## Config file format
 
-The `config` input accepts a path to a file containing gate configuration. Use this to define inline rules without requiring a pre-created gate in Datadog. Refer to the [setup documentation](https://docs.datadoghq.com/deployment_gates/setup) for more details.
+The `config` input accepts a path to a JSON file containing gate configuration. Use this to define inline rules without requiring a pre-created gate in Datadog. Refer to the [setup documentation](https://docs.datadoghq.com/deployment_gates/setup) for more details.
 
 ```json
 {

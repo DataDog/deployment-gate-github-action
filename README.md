@@ -31,8 +31,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-    
-        - name: Deploy Canary
+
+      - name: Deploy Canary
         run: |
           echo "Deploying canary release for service:'my-service' in 'production'. Version 1.0.1"
           # Your deployment commands here
@@ -88,8 +88,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-    
-        - name: Deploy Canary
+
+      - name: Deploy Canary
         run: |
           echo "Deploying canary release for service:'my-service' in 'production'. Version 1.0.1"
           # Your deployment commands here

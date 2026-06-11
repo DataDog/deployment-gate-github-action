@@ -1,5 +1,5 @@
 
-* @DataDog/ci-app
+* @DataDog/ci-app-backend @DataDog/deployment-gates
 
 # Documentation
-*README.md @DataDog/documentation @DataDog/ci-app
+*README.md @DataDog/documentation @DataDog/ci-app-backend @DataDog/deployment-gates

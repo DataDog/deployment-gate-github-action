@@ -11,7 +11,7 @@ Before using this action, you need to:
 1. Set up Deployment Gates in your Datadog account. If you have not, join the preview here: https://www.datadoghq.com/product-preview/deployment-gates/
 2. Have a Datadog API key
 3. Have a Datadog Application key with at least the `deployment_gates_evaluate` scope
-4. Configure your Deployment Gates for your services and environments on the Datadog UI.
+4. Configure your Deployment Gates for your services and environments on the Datadog UI
 
 ## Usage
 

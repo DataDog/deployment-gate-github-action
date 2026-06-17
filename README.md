@@ -11,11 +11,12 @@ Before using this action, you need to:
 1. Set up Deployment Gates in your Datadog account. If you have not, join the preview here: https://www.datadoghq.com/product-preview/deployment-gates/
 2. Have a Datadog API key
 3. Have a Datadog Application key with at least the `deployment_gates_evaluate` scope
-4. Configure your Deployment Gates for your services and environments on the Datadog UI
 
 ## Usage
 
 ### Basic Example
+
+This example evaluates a gate using an inline configuration file, without requiring any prior setup in Datadog.
 
 ```yaml
 name: Deploy with Datadog Deployment Gate
@@ -30,8 +31,65 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-    
-        - name: Deploy Canary
+
+      - name: Deploy Canary
+        run: |
+          echo "Deploying canary release for service:'my-service' in 'production'. Version 1.0.1"
+          # Your deployment commands here
+
+      - name: Evaluate Deployment Gate
+        uses: DataDog/deployment-gate-github-action@v1.0.0
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
+        with:
+          service: my-service
+          env: production
+          config: .github/gate-config.json
+      
+      - name: Deploy
+        run: |
+          echo "Deployment Gate passed, proceeding with deployment"
+          # Your deployment commands here
+```
+
+With `.github/gate-config.json`:
+
+```json
+{
+  "dryRun": false,
+  "rules": [
+    {
+      "type": "monitor",
+      "name": "error rate monitors",
+      "options": {
+        "query": "service:payments-backend env:prod",
+        "duration": 300
+      }
+    }
+  ]
+}
+```
+
+### Example with pre-configured gate
+
+This example evaluates a gate that has been created beforehand. The gate must exist in Datadog before running this workflow — it can be created via the [Datadog UI](https://app.datadoghq.com/ci/deployment-gates), [API](https://docs.datadoghq.com/api/latest/deployment-gates/), or [Terraform](https://registry.terraform.io/providers/DataDog/datadog/latest/docs).
+
+```yaml
+name: Deploy with Datadog Deployment Gate
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Deploy Canary
         run: |
           echo "Deploying canary release for service:'my-service' in 'production'. Version 1.0.1"
           # Your deployment commands here
@@ -74,6 +132,7 @@ The following environment variables are required:
 | `apm-primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection rules (e.g., `region:us-central-1`) | ❌ | |
 | `timeout` | Command timeout in seconds | ❌ | |
 | `fail-on-error` | When true, the script will consider the gate as failed when timeout is reached or unexpected errors occur calling the Datadog APIs. | ❌ | `false` |
+| `config` | Path to a JSON file containing gate rule definitions. See the [setup documentation](https://docs.datadoghq.com/deployment_gates/setup) for the expected format. | ❌ | |
 | `datadog-ci-version` | Version of datadog-ci to install. Use a major version like `v5` to get the latest release within that major version, or a specific tag like `v5.6.0` to pin. | ❌ | `v5` |
 
 

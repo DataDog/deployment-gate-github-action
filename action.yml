@@ -32,6 +32,9 @@ inputs:
   timeout:
     description: 'Command timeout in seconds'
     required: false
+  config:
+    description: 'Path to a file containing gate rule definitions.'
+    required: false
   datadog-ci-version:
     description: 'Version of datadog-ci to install. Use a major version like `v5` to get the latest release within that major version, or a specific tag like `v5.6.0` to pin.'
     required: false
@@ -92,6 +95,11 @@ runs:
           cmd="$cmd --apm-primary-tag '${{ inputs.apm-primary-tag }}'"
           echo "Primary Tag: ${{ inputs.apm-primary-tag }}"
         fi
-        
+
+        if [ -n "${{ inputs.config }}" ]; then
+          cmd="$cmd --config '${{ inputs.config }}'"
+          echo "Config: ${{ inputs.config }}"
+        fi
+
         echo "Executing: $cmd"
         eval "$cmd"

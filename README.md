@@ -127,9 +127,9 @@ The following environment variables are required:
 |-------|-------------|----------|---------|
 | `service` | Name of the service being deployed | ✅ | |
 | `env` | Deployment environment (e.g., staging, production) | ✅ | |
-| `version` | Version being deployed (required for APM Faulty Deployment Detection and Automatic Detection rules) | ❌ | |
+| `version` | Version being deployed (required for APM Faulty Deployment Detection and Bits Deployment Analysis rules) | ❌ | |
 | `identifier` | Custom identifier for the Deployment Gate evaluation | ❌ | |
-| `apm-primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection and Automatic Detection rules (e.g., `region:us-central-1`) | ❌ | |
+| `apm-primary-tag` | Primary tag to scope down APM analysis for APM Faulty Deployment Detection and Bits Deployment Analysis rules (e.g., `region:us-central-1`) | ❌ | |
 | `timeout` | Command timeout in seconds | ❌ | |
 | `fail-on-error` | When true, the script will consider the gate as failed when timeout is reached or unexpected errors occur calling the Datadog APIs. | ❌ | `false` |
 | `config` | Path to a JSON file containing gate rule definitions. See the [setup documentation](https://docs.datadoghq.com/deployment_gates/setup) for the expected format. | ❌ | |

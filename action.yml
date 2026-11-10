@@ -17,13 +17,13 @@ inputs:
     description: 'Deployment environment (e.g., staging, production)'
     required: true
   version:
-    description: 'Version being deployed (required for gates with APM Faulty Deployment Detection or Automatic Detection rules)'
+    description: 'Version being deployed (required for gates with APM Faulty Deployment Detection or Bits Deployment Analysis rules)'
     required: false
   identifier:
     description: 'Custom identifier for the deployment gate evaluation (defaults to "default")'
     required: false
   apm-primary-tag:
-    description: 'Primary tag to scope down APM Faulty Deployment Detection and Automatic Detection rules analysis (e.g., region:us-central-1)'
+    description: 'Primary tag to scope down APM Faulty Deployment Detection and Bits Deployment Analysis rules analysis (e.g., region:us-central-1)'
     required: false
   fail-on-error:
     description: 'Fail the command if timeout is reached or unexpected errors occur calling the Datadog APIs.'
